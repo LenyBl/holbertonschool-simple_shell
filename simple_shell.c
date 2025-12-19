@@ -6,5 +6,14 @@
  */
 int main(void)
 {
-	return (0);
+	size_t len = 0;
+	char *line = NULL;
+
+	while(1)
+	{
+		
+		
+
+		
+	}
 }
