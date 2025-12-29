@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "simple_shell.h"
 /**
  * main - simple UNIX command interpreter
  *
@@ -23,14 +23,16 @@ exit(0);
 }
 if (line[read - 1] == '\n')
 line[read - 1] = '\0';
+if (*line == '\0')
+continue;
 pid = fork();
 if (pid == 0)
 {
 char *argv[] = {line, NULL};
 if (execve(line, argv, environ) == -1)
 {
-perror("./shell");
-exit(1);
+perror("./simple_shell");
+_exit(1);
 }
 }
 else if (pid > 0)
@@ -42,6 +44,6 @@ else
 perror("fork");
 }
 }
-return (0);
 }
+
 
