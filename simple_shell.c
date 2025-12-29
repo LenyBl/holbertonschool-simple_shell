@@ -1,26 +1,32 @@
 #include "simple_shell.h"
 #include <string.h>
 /**
- * trim_spaces - remove leading and trailing spaces
- * @str: input string
+ * trim_spaces - remove leading and trailing spaces in-place
+ * @str: input buffer
  *
- * Return: pointer to trimmed string
+ * Return: same buffer, trimmed
  */
 char *trim_spaces(char *str)
 {
+char *start = str;
 char *end;
-while (*str == ' ' || *str == '\t')
-str++;
-if (*str == '\0')
+while (*start == ' ' || *start == '\t')
+start++;
+if (*start == '\0')
+{
+*str = '\0';
 return (str);
-end = str + strlen(str) - 1;
-while (end > str && (*end == ' ' || *end == '\t'))
+}
+end = start + strlen(start) - 1;
+while (end > start && (*end == ' ' || *end == '\t'))
 end--;
 *(end + 1) = '\0';
+if (start != str)
+memmove(str, start, strlen(start) + 1);
 return (str);
 }
 /**
- * main - simple UNIX command interpreter
+ * main - simple UNIX shell
  *
  * Return: 0
  */
@@ -31,6 +37,7 @@ size_t len = 0;
 ssize_t read;
 pid_t pid;
 int status;
+char *argv[2];
 while (1)
 {
 if (isatty(STDIN_FILENO))
@@ -43,28 +50,25 @@ exit(0);
 }
 if (line[read - 1] == '\n')
 line[read - 1] = '\0';
-line = trim_spaces(line);
-if (*line == '\0')
+trim_spaces(line);
+if (*line == '\0') 
 continue;
 pid = fork();
 if (pid == 0)
 {
-char *argv[2];
 argv[0] = line;
 argv[1] = NULL;
 if (execve(line, argv, environ) == -1)
 {
-perror("./hsh");
+fprintf(stderr, "%s: %s: No such file or directory\n", "./hsh", line);
 _exit(1);
 }
 }
 else if (pid > 0)
-{
 wait(&status);
-}
 else
-{
 perror("fork");
 }
-}
+free(line);
+return (0);
 }
