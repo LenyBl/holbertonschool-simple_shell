@@ -1,4 +1,24 @@
 #include "simple_shell.h"
+#include <string.h>
+/**
+ * trim_spaces - remove leading and trailing spaces
+ * @str: input string
+ *
+ * Return: pointer to trimmed string
+ */
+char *trim_spaces(char *str)
+{
+char *end;
+while (*str == ' ' || *str == '\t')
+str++;
+if (*str == '\0')
+return (str);
+end = str + strlen(str) - 1;
+while (end > str && (*end == ' ' || *end == '\t'))
+end--;
+*(end + 1) = '\0';
+return (str);
+}
 /**
  * main - simple UNIX command interpreter
  *
@@ -23,17 +43,18 @@ exit(0);
 }
 if (line[read - 1] == '\n')
 line[read - 1] = '\0';
+line = trim_spaces(line);
 if (*line == '\0')
 continue;
 pid = fork();
 if (pid == 0)
 {
 char *argv[2];
- argv[0] = line;
- argv[1] = NULL;
+argv[0] = line;
+argv[1] = NULL;
 if (execve(line, argv, environ) == -1)
 {
-perror("./simple_shell");
+perror("./hsh");
 _exit(1);
 }
 }
@@ -47,5 +68,3 @@ perror("fork");
 }
 }
 }
-
-
