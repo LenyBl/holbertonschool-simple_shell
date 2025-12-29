@@ -1,5 +1,9 @@
 #include "simple_shell.h"
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
 /**
  * trim_spaces - remove leading and trailing spaces in-place
  * @str: input buffer
@@ -37,7 +41,8 @@ size_t len = 0;
 ssize_t read;
 pid_t pid;
 int status;
-char *argv[2];
+char *argv[100];
+int i;
 while (1)
 {
 if (isatty(STDIN_FILENO))
@@ -53,21 +58,30 @@ line[read - 1] = '\0';
 trim_spaces(line);
 if (*line == '\0') 
 continue;
+i = 0;
+argv[i] = strtok(line, " \t");
+while (argv[i] && i < 99)
+{
+i++;
+argv[i] = strtok(NULL, " \t");
+}
 pid = fork();
 if (pid == 0)
 {
-argv[0] = line;
-argv[1] = NULL;
-if (execve(line, argv, environ) == -1)
+if (execve(argv[0], argv, environ) == -1)
 {
-fprintf(stderr, "%s: %s: No such file or directory\n", "./hsh", line);
+fprintf(stderr, "./hsh: %s: No such file or directory\n", argv[0]);
 _exit(1);
 }
 }
 else if (pid > 0)
+{
 wait(&status);
+}
 else
+{
 perror("fork");
+}
 }
 free(line);
 return (0);
