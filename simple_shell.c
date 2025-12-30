@@ -4,108 +4,109 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
-/**
- * trim_spaces - remove leading and trailing spaces in-place
- * @str: input buffer
- *
- * Return: same buffer, trimmed
- */
+extern char **environ;
 char *trim_spaces(char *str)
 {
 char *start = str, *end;
-while (*start == ' ' || *start == '\t') start++;
-if (*start == '\0') { *str = '\0'; return str; }
-end = start + strlen(start) - 1;
-while (end > start && (*end == ' ' || *end == '\t')) end--;
-*(end + 1) = '\0';
-if (start != str) memmove(str, start, strlen(start) + 1);
+while (*start == ' ' || *start == '\t')
+start++;
+if (*start == '\0')
+{
+*str = '\0';
 return str;
+}
+end = start + strlen(start) - 1;
+while (end > start && (*end == ' ' || *end == '\t'))
+end--;
+*(end + 1) = '\0';
+if (start != str)
+memmove(str, start, strlen(start) + 1);
+return str;
+}
+char *get_path(void)
+{
+int i = 0;
+while (environ[i])
+{
+if (strncmp(environ[i], "PATH=", 5) == 0)
+return environ[i] + 5;
+i++;
+}
+return NULL;
 }
 char *search_path(char *cmd)
 {
-char *path_env = getenv("PATH");
-char *path = strdup(path_env);
-char *token = strtok(path, ":");
-static char full_path[1024];
+static char full[1024];
+char *path, *copy, *token;
+path = get_path();
+if (!path || *path == '\0')
+return NULL;
+copy = strdup(path);
+if (!copy)
+return NULL;
+token = strtok(copy, ":");
 while (token)
 {
-snprintf(full_path, sizeof(full_path), "%s/%s", token, cmd);
-if (access(full_path, X_OK) == 0)
+snprintf(full, sizeof(full), "%s/%s", token, cmd);
+if (access(full, X_OK) == 0)
 {
-free(path);
-return full_path;
+free(copy);
+return full;
 }
 token = strtok(NULL, ":");
 }
-free(path);
+free(copy);
 return NULL;
 }
-/**
- * main - simple UNIX shell
- *
- * Return: 0
- */
 int main(void)
 {
 char *line = NULL;
 size_t len = 0;
 ssize_t read;
-pid_t pid;
-int status;
 char *argv[100], *cmd_path;
-int i;
+pid_t pid;
+int status, i;
 while (1)
 {
-if (isatty(STDIN_FILENO)) write(STDOUT_FILENO, "#cisfun$", 9);
+if (isatty(STDIN_FILENO))
+write(STDOUT_FILENO, "#cisfun$ ", 9);
 read = getline(&line, &len, stdin);
 if (read == -1)
 {
 free(line);
 exit(0);
 }
-if
-(line[read - 1] == '\n') line[read - 1] = '\0';
+if (line[read - 1] == '\n')
+line[read - 1] = '\0';
 trim_spaces(line);
 if (*line == '\0')
 continue;
 i = 0;
 argv[i] = strtok(line, " \t");
 while (argv[i] && i < 99)
-{
-i++;
-argv[i] = strtok(NULL, " \t");
-}
-if (strchr(argv[0], '/') == NULL)
-{
+argv[++i] = strtok(NULL, " \t");
+if (strchr(argv[0], '/'))
+cmd_path = argv[0];
+else
 cmd_path = search_path(argv[0]);
-if (!cmd_path )
+if (!cmd_path)
 {
 fprintf(stderr, "./hsh: %s: No such file or directory\n", argv[0]);
 continue;
 }
-}
-else
-{
-cmd_path = argv[0];
 pid = fork();
 if (pid == 0)
 {
-if (execve(cmd_path, argv, environ) == -1)
-{
+execve(cmd_path, argv, environ);
 perror("./hsh");
 _exit(1);
 }
-}
 else if (pid > 0)
-{
 wait(&status);
-}
 else
-{
 perror("fork");
-}
 }
 free(line);
 return 0;
 }
-}
+
