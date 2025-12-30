@@ -65,22 +65,21 @@ size_t len = 0;
 ssize_t read;
 char *argv[100], *cmd_path;
 pid_t pid;
-int status, i;
+int status = 0, i;
+unsigned long cmd_count = 0;
 while (1)
 {
 if (isatty(STDIN_FILENO))
 write(STDOUT_FILENO, "#cisfun$ ", 9);
 read = getline(&line, &len, stdin);
 if (read == -1)
-{
-free(line);
-exit(0);
-}
+break;
 if (line[read - 1] == '\n')
 line[read - 1] = '\0';
 trim_spaces(line);
 if (*line == '\0')
 continue;
+cmd_count++;
 i = 0;
 argv[i] = strtok(line, " \t");
 while (argv[i] && i < 99)
@@ -91,7 +90,9 @@ else
 cmd_path = search_path(argv[0]);
 if (!cmd_path)
 {
-fprintf(stderr, "./hsh: %s: No such file or directory\n", argv[0]);
+fprintf(stderr, "./hsh: %lu: %s: not found\n", cmd_count, argv[0]);
+continue;
+status = 127;
 continue;
 }
 pid = fork();
@@ -107,6 +108,7 @@ else
 perror("fork");
 }
 free(line);
+if (!isatty(STDIN_FILENO))
+return status;
 return 0;
 }
-
