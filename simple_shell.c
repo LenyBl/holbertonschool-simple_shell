@@ -1,22 +1,14 @@
 #include "simple_shell.h"
 
-/**
- * main - Entry point for simple shell
- * @argc: argument count
- * @argv: argument vector
- * @envp: environment variables
- * Return: 0 on success
- */
 int main(int argc, char **argv, char **envp)
 {
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
 	char **args;
-	int interactive, cmd_count = 0;
+	int interactive, cmd_count = 0, status = 0;
 	(void)argc;
 	interactive = isatty(STDIN_FILENO);
-
 	while (1)
 	{
 		if (interactive)
@@ -44,9 +36,9 @@ int main(int argc, char **argv, char **envp)
 			free_argv(args);
 			break;
 		}
-		execute_command(args, argv[0], cmd_count, envp);
+		status = execute_command(args, argv[0], cmd_count, envp);
 		free_argv(args);
 	}
 	free(line);
-	return (0);
+	return (status);
 }
