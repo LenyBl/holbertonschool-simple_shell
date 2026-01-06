@@ -1,5 +1,24 @@
 #include "simple_shell.h"
 
+/**
+ * main - Entry point of the simple shell program
+ * @argc: Argument count (unused)
+ * @argv: Argument vector containing the program name
+ * @envp: Array of environment variables
+ *
+ * This function implements a simple command-line shell.
+ * It displays a prompt in interactive mode, reads user input,
+ * parses commands, and executes them.
+ *
+ * Built-in commands handled:
+ * - exit: exits the shell
+ * - env: prints the environment variables
+ *
+ * The shell continues running until EOF is reached or the
+ * exit command is entered.
+ *
+ * Return: The exit status of the last executed command.
+ */
 int main(int argc, char **argv, char **envp)
 {
 	char *line = NULL;
