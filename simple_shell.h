@@ -23,4 +23,6 @@ char **parse_input(char *line);
 /* Memory management functions */
 void free_argv(char **argv);
 
+void print_env(char **env);
+
 #endif /* SIMPLE_SHELL_H */
