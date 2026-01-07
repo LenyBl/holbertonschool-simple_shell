@@ -1,0 +1,143 @@
+.TH HSH 1 "January 2026" "Holberton School" "User Commands"
+.SH NAME
+hsh \- simple UNIX command interpreter
+
+.SH SYNOPSIS
+.B ./hsh
+.RI [ command\ ... ]
+
+.SH DESCRIPTION
+.B hsh
+is a simple UNIX command interpreter developed as part of the Holberton School curriculum.
+It reads commands from standard input, parses them into tokens, resolves executable paths,
+and executes programs using
+.BR fork (2)
+and
+.BR execve (2).
+
+The shell supports both interactive and non-interactive modes.
+
+.TP
+.B Interactive mode
+When standard input is connected to a terminal, the shell displays a prompt and waits for user commands.
+.TP
+.B Non-interactive mode
+When input is provided via a pipe or file, commands are read and executed without displaying a prompt.
+
+.SH INVOCATION
+To start the shell, run:
+.IP
+.B ./hsh
+.PP
+To exit the shell, use the builtin command:
+.IP
+.B exit
+.PP
+or send an EOF signal (Ctrl-D).
+
+.SH BUILTINS
+Built-in commands are executed internally without searching the PATH.
+
+.TP
+.B exit
+Terminates the shell. An optional numeric argument may be used as the exit status.
+.TP
+.B env
+Prints the current environment variables.
+
+.SH COMMAND EXECUTION
+When a command is entered:
+.IP \(bu 2
+If the command matches a builtin, it is executed directly.
+.IP \(bu 2
+If the command contains a slash (\fB/\fP), it is treated as a path to an executable.
+.IP \(bu 2
+Otherwise, the shell searches for the command in the directories listed in the
+.B PATH
+environment variable.
+
+.SH ENVIRONMENT
+.B hsh
+inherits the environment of the parent process.
+
+Common variables include:
+.TP
+.B PATH
+A colon-separated list of directories used to locate executable files.
+.TP
+.B HOME
+The user home directory (not required, but commonly present).
+
+.SH EXIT STATUS
+The exit status of
+.B hsh
+is generally:
+.IP \(bu 2
+the exit status of the last executed command, or
+.IP \(bu 2
+a shell-defined value in case of an error.
+
+If a command is not found, an error message is printed and the shell continues running
+in interactive mode.
+
+.SH SIGNALS
+Signal handling depends on the implementation. Typically:
+.IP \(bu 2
+.B SIGINT
+(Ctrl-C) is handled so that it interrupts the current command without exiting the shell.
+.IP \(bu 2
+Child processes receive signals normally.
+
+.SH LIMITATIONS
+As a minimalist educational shell,
+.B hsh
+may not support:
+.IP \(bu 2
+advanced quoting or escaping,
+.IP \(bu 2
+wildcard expansion (globbing),
+.IP \(bu 2
+command chaining (\fB;\fP),
+.IP \(bu 2
+logical operators (\fB&&\fP, \fB||\fP),
+.IP \(bu 2
+pipes or redirections.
+
+.SH EXAMPLES
+Interactive mode:
+.IP
+.EX
+$ ./hsh
+(hsh)$ ls -l
+(hsh)$ env
+(hsh)$ exit
+.EE
+
+Non-interactive mode:
+.IP
+.EX
+$ echo "pwd" | ./hsh
+/home/user
+.EE
+
+.SH FILES
+.TP
+.I AUTHORS
+List of project contributors.
+.TP
+.I man_1_simple_shell
+Manual page for the hsh shell.
+
+.SH AUTHORS
+This project was developed as part of the Holberton School Software Engineering program.
+See the
+.I AUTHORS
+file for a complete list of contributors.
+
+.SH SEE ALSO
+.BR sh (1),
+.BR bash (1),
+.BR execve (2),
+.BR fork (2),
+.BR wait (2),
+.BR environ (7)
