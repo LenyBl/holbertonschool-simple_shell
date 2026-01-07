@@ -101,11 +101,11 @@ man ./man_1_simple_shell
 
 ### Install Betty 
 
-## Clone Betty repo
+#### Clone Betty repo
 ```bash
 git clone https://github.com/hs-hq/Betty.git
 ```
-## Create Betty file and add script
+#### Create Betty file and add script
 
 ```bash
 vi betty
@@ -129,7 +129,7 @@ for argument in "$@"; do
 done
 ```
 
-## Add permission on file and move the file
+#### Add permission on file and move the file
 
 ```bash
 chmod a+x betty
