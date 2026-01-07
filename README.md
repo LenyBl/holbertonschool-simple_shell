@@ -136,8 +136,8 @@ This shell does **not** support:
 
 ## Authors
 
-- **LenyBl**
-- **Kedia Ihogoza**  
+- [Blee Leny](https://github.com/LenyBl)
+- [Kedia Ihogoza](https://github.com/Kedia12)
 
 ## License
 
