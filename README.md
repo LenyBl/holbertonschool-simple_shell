@@ -2,6 +2,8 @@
 
 A simple UNIX command line interpreter written in C, developed as part of the Holberton School curriculum.
 
+![texte alternatif](flowchart/Flowchart-simple_shell.png)
+
 ## Description
 
 **Simple Shell** is a minimalist UNIX shell that replicates a small subset of the behavior of standard shells such as `sh`.
