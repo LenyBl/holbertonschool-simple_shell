@@ -2,7 +2,7 @@
 
 A simple UNIX command line interpreter written in C, developed as part of the Holberton School curriculum.
 
-![texte alternatif](flowchart/Flowchart-simple_shell.png)
+
 
 ## Description
 
