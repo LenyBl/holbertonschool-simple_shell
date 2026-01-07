@@ -99,10 +99,56 @@ man ./man_1_simple_shell
 
 ## Betty and Valgrind
 
+### Install Betty 
+
+## Clone Betty repo
+```bash
+git clone https://github.com/hs-hq/Betty.git
+```
+## Create Betty file and add script
+
+```bash
+vi betty
+```
+
+```bash
+#!/bin/bash
+BIN_PATH="/usr/local/bin"
+BETTY_STYLE="betty-style"
+BETTY_DOC="betty-doc"
+
+if [ "$#" = "0" ]; then
+    echo "No arguments passed."
+    exit 1
+fi
+
+for argument in "$@"; do
+    echo -e "\n========== $argument =========="
+    ${BIN_PATH}/${BETTY_STYLE} "$argument"
+    ${BIN_PATH}/${BETTY_DOC} "$argument"
+done
+```
+
+## Add permission on file and move the file
+
+```bash
+chmod a+x betty
+```
+
+```bash
+sudo mv betty /bin/
+```
+
 ### Betty Check
 
 ```bash
 betty *.c *.h
+```
+
+### Install Valgrind
+
+```bash
+sudo apt install valgrind
 ```
 
 ### Valgrind Check
